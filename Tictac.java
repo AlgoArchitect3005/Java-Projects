@@ -16,6 +16,7 @@ public class Tictac {
         Scanner sc = new Scanner(System.in);
         char player = 'X';
         boolean gameover = false;
+        int moves = 0;
 
         while (!gameover) {
             printBoard(board);
@@ -60,6 +61,7 @@ public class Tictac {
             // Place the move
             if (board[row][col] == ' ') {
                 board[row][col] = player;
+                moves++;
 
                 gameover = haveWon(board, player);
 
