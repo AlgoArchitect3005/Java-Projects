@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.awt.event.KeyEvent;
+
 
 public class Notepad_with_swing extends JFrame implements ActionListener {
 
