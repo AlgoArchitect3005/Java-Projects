@@ -71,7 +71,8 @@ public class Tictac {
 
                 if (gameover) {
                     printBoard(board);
-                    System.out.println("🎉 Player " + player + " has WON the game!");
+                    System.out.println(" ");
+                    System.out.println("~^~ Player " + player + " has WON the game!");
                 } else if (moves == 9) {
                     printBoard(board);
                     System.out.println("🤝 Game Draw!");
