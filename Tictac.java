@@ -17,6 +17,7 @@ public class Tictac {
         char player = 'X';
         boolean gameover = false;
         int moves = 0;
+        boolean exitGame = false;
 
         while (!gameover) {
             printBoard(board);
@@ -28,16 +29,18 @@ public class Tictac {
                 try {
                     System.out.println("Player " + player + " enter row and col (0-2) or type 'exit' to quit: ");
 
-                    String r = sc.next();  // row input as string
+                    String r = sc.next(); // row input as string
                     if (r.equalsIgnoreCase("exit")) {
-                        System.out.println("Game Exited.");
-                        System.exit(0);
+                        // System.out.println("Game Exited.");
+                        exitGame = true;
+                        break;
                     }
 
-                    String c = sc.next();  // col input as string
+                    String c = sc.next(); // col input as string
                     if (c.equalsIgnoreCase("exit")) {
-                        System.out.println("Game Exited.");
-                        System.exit(0);
+                        // System.out.println("Game Exited.");
+                        exitGame = true;
+                        break;
                     }
 
                     // convert to int
@@ -55,6 +58,7 @@ public class Tictac {
                 } catch (NumberFormatException e) {
                     System.out.println("❌ Invalid input! Please enter numbers or type 'exit'.");
                 }
+                if(exitGame) break;
             }
             // --------------------------------------------------------------
 
@@ -68,8 +72,12 @@ public class Tictac {
                 if (gameover) {
                     printBoard(board);
                     System.out.println("🎉 Player " + player + " has WON the game!");
+                } else if (moves == 9) {
+                    printBoard(board);
+                    System.out.println("🤝 Game Draw!");
+                    break;
                 } else {
-                    player = (player == 'X') ? 'O' : 'X';  // switch player
+                    player = (player == 'X') ? 'O' : 'X';
                 }
 
             } else {
@@ -112,7 +120,7 @@ public class Tictac {
 
         // Check diagonals
         if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
-            (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
+                (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
             return true;
         }
 
