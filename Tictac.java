@@ -58,9 +58,9 @@ public class Tictac {
                 } catch (NumberFormatException e) {
                     System.out.println("❌ Invalid input! Please enter numbers or type 'exit'.");
                 }
-                if(exitGame)
-               System.out.println("Game exited")
- break;
+                if (exitGame)
+                    System.out.println("Game exited");
+                break;
             }
             // --------------------------------------------------------------
 
@@ -93,18 +93,20 @@ public class Tictac {
 
     // PRINT BOARD FUNCTION
 
-     public static void printBoard(char[][] board) {
-    System.out.println("   0   1   2");
-    for (int row = 0; row < 3; row++) {
-        System.out.print(row + " ");
-        for (int col = 0; col < 3; col++) {
-            System.out.print(" " + board[row][col] + " ");
-            if (col < 2) System.out.print("|");
+    public static void printBoard(char[][] board) {
+        System.out.println("   0   1   2");
+        for (int row = 0; row < 3; row++) {
+            System.out.print(row + " ");
+            for (int col = 0; col < 3; col++) {
+                System.out.print(" " + board[row][col] + " ");
+                if (col < 2)
+                    System.out.print("|");
+            }
+            System.out.println();
+            if (row < 2)
+                System.out.println("  -----------");
         }
-        System.out.println();
-        if (row < 2) System.out.println("  -----------");
     }
-}
 
     // CHECK WINNER
     public static boolean hasWon(char[][] board, char player) {
