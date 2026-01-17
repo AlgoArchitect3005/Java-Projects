@@ -58,7 +58,9 @@ public class Tictac {
                 } catch (NumberFormatException e) {
                     System.out.println("❌ Invalid input! Please enter numbers or type 'exit'.");
                 }
-                if(exitGame) break;
+                if(exitGame)
+               System.out.println("Game exited")
+ break;
             }
             // --------------------------------------------------------------
 
