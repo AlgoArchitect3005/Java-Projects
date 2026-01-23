@@ -92,6 +92,10 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         JMenuItem darkModeItem = new JMenuItem("Toggle Dark Mode");
         darkModeItem.addActionListener(this);
         viewMenu.add(darkModeItem);
+
+        //keyboard shortcut for dark mode
+        darkModeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
+
         // Add to menu bar
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
