@@ -215,7 +215,7 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, msg);
                 break;
 
-            case "Dark Mode":
+            case "Toggle Dark Mode":
                 toggleDarkMode();
                 break;
         }
