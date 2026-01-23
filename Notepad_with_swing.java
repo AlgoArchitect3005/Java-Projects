@@ -106,6 +106,7 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         menuBar.add(formatMenu);
         menuBar.add(viewMenu);
 
+        loadLastOpenedFile();
         setVisible(true);
     }
 
@@ -243,6 +244,27 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
             scrollPane.getViewport().setBackground(Color.WHITE);
         }
     }
+    private void loadLastOpenedFile() {
+    String lastPath = prefs.get("lastFilePath", null);
+
+    if (lastPath != null) {
+        File file = new File(lastPath);
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                textArea.setText("");
+                String line;
+                while ((line = br.readLine()) != null) {
+                    textArea.append(line + "\n");
+                }
+                currentFilePath = lastPath;
+                setTitle("Mini Notepad - " + file.getName());
+            } catch (Exception e) {
+                // ignore if error
+            }
+        }
+    }
+}
+
 
     public static void main(String[] args) {
         new Notepad_with_swing();
