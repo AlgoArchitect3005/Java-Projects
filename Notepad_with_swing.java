@@ -220,11 +220,15 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
     private void toggleDarkMode() {
         darkMode = !darkMode;
         if (darkMode) {
-            textArea.setBackground(Color.DARK_GRAY);
+            textArea.setBackground(new Color(30,30,30));
             textArea.setForeground(Color.WHITE);
+            textArea.setCaretColor(Color.WHITE);
+            scrollPane.getViewport().setBackground(new Color(30,30,30));
         } else {
             textArea.setBackground(Color.WHITE);
             textArea.setForeground(Color.BLACK);
+            textArea.setCaretColor(Color.BLACK);
+            scrollPane.getViewport().setBackground(Color.WHITE);
         }
     }
 
