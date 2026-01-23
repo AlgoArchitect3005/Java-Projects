@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.awt.event.KeyEvent;
 
 
 public class Notepad_with_swing extends JFrame implements ActionListener {
@@ -11,6 +10,7 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
     JScrollPane scrollPane;
     boolean wordWrap = false;
     String currentFilePath = null;
+    boolean darkMode = false;
 
     public Notepad_with_swing() {
         // Frame setup
@@ -87,10 +87,16 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         wrap.addActionListener(this);
         formatMenu.add(wrap);
 
+        //View Menu
+        JMenu viewMenu = new JMenu("View");
+        JMenuItem darkModeItem = new JMenuItem("Toggle Dark Mode");
+        darkModeItem.addActionListener(this);
+        viewMenu.add(darkModeItem);
         // Add to menu bar
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(formatMenu);
+        menuBar.add(viewMenu);
 
         setVisible(true);
     }
@@ -203,6 +209,17 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
                 textArea.setWrapStyleWord(wordWrap);
                 String msg = wordWrap ? "Word Wrap Enabled" : "Word Wrap Disabled";
                 JOptionPane.showMessageDialog(this, msg);
+                break;
+
+            case "Dark Mode":
+                darkMode = !darkMode;
+                if (darkMode) {
+                    textArea.setBackground(Color.DARK_GRAY);
+                    textArea.setForeground(Color.WHITE);
+                } else {
+                    textArea.setBackground(Color.WHITE);
+                    textArea.setForeground(Color.BLACK);
+                }
                 break;
         }
     }
