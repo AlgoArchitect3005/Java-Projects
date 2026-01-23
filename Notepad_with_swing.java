@@ -212,15 +212,19 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
                 break;
 
             case "Dark Mode":
-                darkMode = !darkMode;
-                if (darkMode) {
-                    textArea.setBackground(Color.DARK_GRAY);
-                    textArea.setForeground(Color.WHITE);
-                } else {
-                    textArea.setBackground(Color.WHITE);
-                    textArea.setForeground(Color.BLACK);
-                }
+                toggleDarkMode();
                 break;
+        }
+    }
+
+    private void toggleDarkMode() {
+        darkMode = !darkMode;
+        if (darkMode) {
+            textArea.setBackground(Color.DARK_GRAY);
+            textArea.setForeground(Color.WHITE);
+        } else {
+            textArea.setBackground(Color.WHITE);
+            textArea.setForeground(Color.BLACK);
         }
     }
 
