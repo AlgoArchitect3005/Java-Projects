@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.prefs.Preferences;
+
 
 
 public class Notepad_with_swing extends JFrame implements ActionListener {
@@ -11,6 +13,8 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
     boolean wordWrap = false;
     String currentFilePath = null;
     boolean darkMode = false;
+    Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+
 
     public Notepad_with_swing() {
         // Frame setup
@@ -120,6 +124,8 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             currentFilePath = file.getAbsolutePath();
+            prefs.put("lastFilePath", currentFilePath);
+
 
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 textArea.setText("");
@@ -158,6 +164,8 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             currentFilePath = file.getAbsolutePath();
+            prefs.put("lastFilePath", currentFilePath);
+
 
             try (FileWriter fw = new FileWriter(file)) {
                 fw.write(textArea.getText());
