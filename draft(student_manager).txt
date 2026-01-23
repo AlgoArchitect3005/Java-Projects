@@ -1,0 +1,166 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+//import
+// ---------- STUDENT CLASS ----------
+class Student {
+    private String name;
+    private int rollno;    
+    private double attendance;
+
+    public Student(String name, int rollno, double attendance) {
+        this.name = name;
+        this.rollno = rollno;
+        this.attendance = attendance;   
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getRollNo() {
+        return rollno;
+    }
+
+    public double getAttendance() {
+        return attendance;
+    }
+
+    public void displayInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Roll No: " + rollno);
+        System.out.println("Attendance: " + attendance + "%");
+    }
+}
+
+// ---------- DEPARTMENT CLASS ----------
+class Department {
+    private String deptName;
+    private ArrayList<Student> students;
+
+    public Department(String deptName) {
+        this.deptName = deptName;
+        students = new ArrayList<>();
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    public void displayInfo() {
+        System.out.println("Department: " + deptName);
+        for (Student s : students) {
+            s.displayInfo();
+            System.out.println("-----");
+        }
+    }
+
+    public double calculateAvgAttendance() {
+        double total = 0;
+        for (Student s : students) {
+            total += s.getAttendance();
+        }
+        return students.size() > 0 ? total / students.size() : 0;
+    }
+}
+
+// ---------- COLLEGE CLASS ----------
+class College {
+    private String collegeName;
+    private ArrayList<Department> departments;
+
+    public College(String collegeName) {
+        this.collegeName = collegeName;
+        departments = new ArrayList<>();
+    }
+
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+    public void addDepartment(Department d) {
+        departments.add(d);
+    }
+
+    // 🔍 Find a department by name
+    public Department findDepartment(String name) {
+        for (Department d : departments) {
+            if (d.getDeptName().equalsIgnoreCase(name)) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    public void displayInfo() {
+        System.out.println("\nCollege: " + collegeName);
+        for (Department d : departments) {
+            d.displayInfo();
+            System.out.println("Average Attendance: " + d.calculateAvgAttendance() + "%");
+            System.out.println("=====");
+        }
+    }
+}
+
+// ---------- MAIN CLASS ----------
+public class student_manager {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        College c = new College("GGITS");
+        int choice;
+
+        while (true) {
+            System.out.println("\n===== College Management Menu =====");
+            System.out.println("1. Add Department");
+            System.out.println("2. Add Student");
+            System.out.println("3. Display College Info");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine();  // consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Department Name: ");
+                    String deptName = sc.nextLine();
+                    c.addDepartment(new Department(deptName));
+                    System.out.println("✅ Department added successfully!");
+                    break;
+
+                case 2:
+                    System.out.print("Enter Department Name: ");
+                    String dept = sc.nextLine();
+                    Department d = c.findDepartment(dept);
+                    if (d == null) {
+                        System.out.println("❌ Department not found! Add department first.");
+                    } else {
+                        System.out.print("Enter Student Name: ");
+                        String name = sc.nextLine();
+                        System.out.print("Enter Roll No: ");
+                        int roll = sc.nextInt();
+                        System.out.print("Enter Attendance (%): ");
+                        double att = sc.nextDouble();
+                        sc.nextLine(); // consume newline
+                        d.addStudent(new Student(name, roll, att));
+                        System.out.println("✅ Student added successfully!");
+                    }
+                    break;
+
+                case 3:
+                    c.displayInfo();
+                    break;
+
+                case 4:
+                    System.out.println("👋 Exiting program... Goodbye!");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("⚠️ Invalid choice, try again!");
+            }
+        }
+    }
+}

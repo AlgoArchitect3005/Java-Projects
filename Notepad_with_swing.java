@@ -4,37 +4,47 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.prefs.Preferences;
 
-
-
 public class Notepad_with_swing extends JFrame implements ActionListener {
 
     JTextArea textArea;
     JScrollPane scrollPane;
+    JMenuBar menuBar;
     boolean wordWrap = false;
-    String currentFilePath = null;
     boolean darkMode = false;
+    String currentFilePath = null;
+
     Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
+    GradientPanel gradientPanel;
 
     public Notepad_with_swing() {
-        // Frame setup
-        setTitle("Mini Notepad");
+
+        // ===== Frame =====
+        setTitle("NoteNest: A cozy space for all your thoughts and ideas");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        // Text Area
+        // ===== Text Area =====
         textArea = new JTextArea();
-        textArea.setFont(new Font("Arial", Font.PLAIN, 18));
+        textArea.setFont(new Font("Consolas", Font.PLAIN, 18));
+        textArea.setMargin(new Insets(10, 10, 10, 10));
 
-        // Scroll bar
+        // ===== ScrollPane =====
         scrollPane = new JScrollPane(textArea);
-        add(scrollPane);
 
-        // Menu Bar
-        JMenuBar menuBar = new JMenuBar();
+        // ===== Gradient Panel (for dark mode background) =====
+        gradientPanel = new GradientPanel();
+        gradientPanel.setLayout(new BorderLayout());
+        gradientPanel.add(scrollPane, BorderLayout.CENTER);
+
+        add(gradientPanel, BorderLayout.CENTER);
+
+        // ===== Menu Bar =====
+        menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
-        // File Menu
+        // -------- File Menu --------
         JMenu fileMenu = new JMenu("File");
         JMenuItem newFile = new JMenuItem("New");
         JMenuItem openFile = new JMenuItem("Open");
@@ -42,12 +52,11 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         JMenuItem saveAsFile = new JMenuItem("Save As");
         JMenuItem exit = new JMenuItem("Exit");
 
-        // Keyboard shortcuts for file operations ( new, open, save, save as, exit )
         newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
         openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
         saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-        saveAsFile.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+        saveAsFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+                InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
         exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
 
         newFile.addActionListener(this);
@@ -62,13 +71,12 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         fileMenu.add(saveAsFile);
         fileMenu.add(exit);
 
-        // Edit Menu
+        // -------- Edit Menu --------
         JMenu editMenu = new JMenu("Edit");
         JMenuItem cut = new JMenuItem("Cut");
         JMenuItem copy = new JMenuItem("Copy");
         JMenuItem paste = new JMenuItem("Paste");
 
-        // Keyboard shortcuts for cut, copy, paste
         cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
         copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
         paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
@@ -81,70 +89,61 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         editMenu.add(copy);
         editMenu.add(paste);
 
-        // Format Menu
+        // -------- Format Menu --------
         JMenu formatMenu = new JMenu("Format");
         JMenuItem wrap = new JMenuItem("Word Wrap");
-        
-        // Keyboard shortcut for word wrap
         wrap.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
-        
         wrap.addActionListener(this);
         formatMenu.add(wrap);
 
-        //View Menu
+        // -------- View Menu --------
         JMenu viewMenu = new JMenu("View");
         JMenuItem darkModeItem = new JMenuItem("Toggle Dark Mode");
+        darkModeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
         darkModeItem.addActionListener(this);
         viewMenu.add(darkModeItem);
 
-        //keyboard shortcut for dark mode
-        darkModeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
-
-        // Add to menu bar
+        // ===== Add menus =====
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(formatMenu);
         menuBar.add(viewMenu);
 
+        // ===== Load last opened file =====
         loadLastOpenedFile();
+
         setVisible(true);
     }
 
-    // FILE OPERATIONS
+    // ================= FILE OPERATIONS =================
 
     private void newFile() {
         textArea.setText("");
         currentFilePath = null;
-        setTitle("Mini Notepad - New File");
+        setTitle("NoteNest - New File");
     }
 
     private void openFile() {
         JFileChooser chooser = new JFileChooser();
-        int result = chooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             currentFilePath = file.getAbsolutePath();
             prefs.put("lastFilePath", currentFilePath);
 
-
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 textArea.setText("");
                 String line;
-
                 while ((line = br.readLine()) != null) {
                     textArea.append(line + "\n");
                 }
-
-                setTitle("Mini Notepad - " + file.getName());
+                setTitle("NoteNest - " + file.getName());
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error reading file!");
+                JOptionPane.showMessageDialog(this, "Error opening file");
             }
         }
     }
 
     private void saveFile() {
-        // If no file selected previously → Save As
         if (currentFilePath == null) {
             saveAsFile();
             return;
@@ -152,121 +151,119 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
 
         try (FileWriter fw = new FileWriter(currentFilePath)) {
             fw.write(textArea.getText());
-            JOptionPane.showMessageDialog(this, "File Saved!");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error saving file!");
+            JOptionPane.showMessageDialog(this, "Error saving file");
         }
     }
 
     private void saveAsFile() {
         JFileChooser chooser = new JFileChooser();
-        int result = chooser.showSaveDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             currentFilePath = file.getAbsolutePath();
             prefs.put("lastFilePath", currentFilePath);
 
-
             try (FileWriter fw = new FileWriter(file)) {
                 fw.write(textArea.getText());
-                JOptionPane.showMessageDialog(this, "File Saved!");
-                setTitle("Mini Notepad - " + file.getName());
+                setTitle("NoteNest - " + file.getName());
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error saving file!");
+                JOptionPane.showMessageDialog(this, "Error saving file");
             }
         }
     }
 
-    // Action Handler
+    // ================= ACTION HANDLER =================
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        String command = e.getActionCommand();
-
-        switch (command) {
-            case "New":
-                newFile();
-                break;
-
-            case "Open":
-                openFile();
-                break;
-
-            case "Save":
-                saveFile();
-                break;
-
-            case "Save As":
-                saveAsFile();
-                break;
-
-            case "Exit":
-                System.exit(0);
-                break;
-
-            case "Cut":
-                textArea.cut();
-                break;
-
-            case "Copy":
-                textArea.copy();
-                break;
-
-            case "Paste":
-                textArea.paste();
-                break;
-
-            case "Word Wrap":
+        switch (e.getActionCommand()) {
+            case "New" -> newFile();
+            case "Open" -> openFile();
+            case "Save" -> saveFile();
+            case "Save As" -> saveAsFile();
+            case "Exit" -> System.exit(0);
+            case "Cut" -> textArea.cut();
+            case "Copy" -> textArea.copy();
+            case "Paste" -> textArea.paste();
+            case "Word Wrap" -> {
                 wordWrap = !wordWrap;
                 textArea.setLineWrap(wordWrap);
                 textArea.setWrapStyleWord(wordWrap);
                 String msg = wordWrap ? "Word Wrap Enabled" : "Word Wrap Disabled";
                 JOptionPane.showMessageDialog(this, msg);
-                break;
-
-            case "Toggle Dark Mode":
-                toggleDarkMode();
-                break;
+            }
+            case "Toggle Dark Mode" -> toggleDarkMode();
         }
     }
 
+    // ================= DARK MODE =================
+
     private void toggleDarkMode() {
         darkMode = !darkMode;
+
         if (darkMode) {
-            textArea.setBackground(new Color(30,30,30));
+            textArea.setBackground(new Color(40, 44, 52));
             textArea.setForeground(Color.WHITE);
             textArea.setCaretColor(Color.WHITE);
-            scrollPane.getViewport().setBackground(new Color(30,30,30));
+            scrollPane.getViewport().setOpaque(false);
+
+            menuBar.setBackground(Color.BLACK);
+            for (MenuElement m : menuBar.getSubElements()) {
+                ((JMenu) m.getComponent()).setForeground(Color.WHITE);
+            }
+
         } else {
             textArea.setBackground(Color.WHITE);
             textArea.setForeground(Color.BLACK);
             textArea.setCaretColor(Color.BLACK);
-            scrollPane.getViewport().setBackground(Color.WHITE);
-        }
-    }
-    private void loadLastOpenedFile() {
-    String lastPath = prefs.get("lastFilePath", null);
+            scrollPane.getViewport().setOpaque(true);
 
-    if (lastPath != null) {
-        File file = new File(lastPath);
-        if (file.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                textArea.setText("");
-                String line;
-                while ((line = br.readLine()) != null) {
-                    textArea.append(line + "\n");
+            menuBar.setBackground(UIManager.getColor("MenuBar.background"));
+            for (MenuElement m : menuBar.getSubElements()) {
+                ((JMenu) m.getComponent()).setForeground(Color.BLACK);
+            }
+        }
+
+        repaint();
+    }
+
+    // ================= LAST FILE =================
+
+    private void loadLastOpenedFile() {
+        String path = prefs.get("lastFilePath", null);
+        if (path != null) {
+            File file = new File(path);
+            if (file.exists()) {
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                    textArea.setText("");
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        textArea.append(line + "\n");
+                    }
+                    currentFilePath = path;
+                    setTitle("NoteNest - " + file.getName());
+                } catch (Exception ignored) {
                 }
-                currentFilePath = lastPath;
-                setTitle("Mini Notepad - " + file.getName());
-            } catch (Exception e) {
-                // ignore if error
             }
         }
     }
-}
-
 
     public static void main(String[] args) {
         new Notepad_with_swing();
+    }
+}
+
+// ================= GRADIENT PANEL =================
+
+class GradientPanel extends JPanel {
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        GradientPaint gp = new GradientPaint(
+                0, 0, new Color(40, 44, 52),
+                0, getHeight(), new Color(28, 31, 36));
+        g2.setPaint(gp);
+        g2.fillRect(0, 0, getWidth(), getHeight());
     }
 }
