@@ -9,6 +9,8 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
     JTextArea textArea;
     JScrollPane scrollPane;
     JMenuBar menuBar;
+    JPanel statusBar;
+    JLabel statusLabel;
     boolean wordWrap = false;
     boolean darkMode = false;
     String currentFilePath = null;
@@ -39,6 +41,15 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         gradientPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(gradientPanel, BorderLayout.CENTER);
+
+        // ===== Status Bar =====
+        statusBar = new JPanel(new BorderLayout());
+        statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+        statusLabel = new JLabel("Ln 1, Col 1 | Words: 0");
+        statusBar.add(statusLabel, BorderLayout.WEST);
+
+        add(statusBar, BorderLayout.SOUTH);
 
         // ===== Menu Bar =====
         menuBar = new JMenuBar();
@@ -112,6 +123,8 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
         // ===== Load last opened file =====
         loadLastOpenedFile();
 
+        // ===== Status Bar =====
+         textArea.addCaretListener(e->updateStatusBar());
         setVisible(true);
     }
 
@@ -206,8 +219,12 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
             textArea.setForeground(Color.WHITE);
             textArea.setCaretColor(Color.WHITE);
             scrollPane.getViewport().setOpaque(false);
+            
+            //====Status Bar Dark Mode====
+            statusBar.setBackground(new Color(28, 31, 36));
+            statusLabel.setForeground(Color.WHITE);
 
-            menuBar.setBackground(Color.BLACK);
+            menuBar.setBackground(new Color(45,44,68));
             for (MenuElement m : menuBar.getSubElements()) {
                 ((JMenu) m.getComponent()).setForeground(Color.WHITE);
             }
@@ -217,7 +234,10 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
             textArea.setForeground(Color.BLACK);
             textArea.setCaretColor(Color.BLACK);
             scrollPane.getViewport().setOpaque(true);
-
+ 
+            //====Status Bar Light Mode====
+            statusBar.setBackground(UIManager.getColor("Panel.background"));
+            statusLabel.setForeground(Color.BLACK);
             menuBar.setBackground(UIManager.getColor("MenuBar.background"));
             for (MenuElement m : menuBar.getSubElements()) {
                 ((JMenu) m.getComponent()).setForeground(Color.BLACK);
@@ -247,6 +267,22 @@ public class Notepad_with_swing extends JFrame implements ActionListener {
             }
         }
     }
+
+    // ================= STATUS BAR =================
+    private void updateStatusBar(){
+        try{
+        int caretPos = textArea.getCaretPosition();
+        int line = textArea.getLineOfOffset(caretPos);
+        int col = caretPos - textArea.getLineStartOffset(line);
+        String text = textArea.getText().trim();
+        int words = text.isEmpty() ? 0 : text.split("\\s+").length;
+        statusLabel.setText("Ln " + (line + 1) + ", Col " + (col + 1) + " | Words: " + words);
+    }
+    catch(Exception e){
+        e.printStackTrace();
+}
+}
+    
 
     public static void main(String[] args) {
         new Notepad_with_swing();
